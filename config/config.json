@@ -1,0 +1,82 @@
+{
+  "listeners": [
+    {
+      "port": "25",
+      "encryption": "none"
+    },
+    {
+      "port": "465",
+      "encryption": "tls"
+    },
+    {
+      "port": "587", 
+      "encryption": "starttls"
+    }
+  ],
+  "default_relay": "smtp.example.com:25",
+  "allow_list": ["example.com", "192.168.1.1", "2001:db8::1"],
+  "block_list": ["spamdomain.com", "10.0.0.1", "2001:db8::2"],
+  "domain_routing": {
+    "example.org": "smtp.example.org:25",
+    "example.net": "smtp.example.net:25"
+  },
+  "tls": {
+    "cert_file": "config/certs/server.crt",
+    "key_file": "config/certs/server.key"
+  },
+  "enable_auth": false,
+  "auth_username": "user",
+  "auth_password": "password",
+  "logging": {
+    "log_file": "smtp-relay",
+    "log_level": "INFO",
+    "max_size_mb": 100,
+    "max_backups": 5,
+    "max_age_days": 30,
+    "compress": true,
+    "local_time": true
+  },
+  "service": {
+    "name": "smtp-relay",
+    "display_name": "SMTP Relay Service",
+    "description": "SMTP Relay Service for email delivery",
+    "dependencies": [],
+    "start_type": "auto",
+    "failure_actions": {
+      "reset_period": 86400,
+      "reboot_message": "SMTP Relay Service failure",
+      "actions": [
+        {
+          "type": "restart",
+          "delay": 60000
+        },
+        {
+          "type": "restart",
+          "delay": 120000
+        },
+        {
+          "type": "none",
+          "delay": 0
+        }
+      ]
+    }
+  },
+  "rate_limiting": {
+    "requests_per_minute": 100,
+    "burst_limit": 20,
+    "exempt_ips": ["127.0.0.1"]
+  },
+  "queue": {
+    "storage_path": "./queue_storage",
+    "max_retries": 5,
+    "retry_interval": "5m",
+    "max_queue_size": 1000,
+    "persist_interval": "1m"
+  },
+  "_comment": [
+    "Logs include the log level (e.g., [INFO], [WARN], [ERROR])",
+    "Service configuration applies to Windows, Linux and MacOS",
+    "Log rotation settings: max_size_mb, max_backups, max_age_days",
+    "Encryption types: none, tls, starttls"
+  ]
+}
